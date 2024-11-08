@@ -1,4 +1,12 @@
+/*TIME 4:
+ISABELLY LETÍCIA HORSCHUTZ
+JÚLIA DAMÁRIA LUPI - 24002058
+MAYSA GABRIELLE RODRIGUES DE MELO 
+*/
+
 #include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
 
 //função para algoritmo de ordenação bublle sort
 void bubble_sort (int* vetor, int tam){
@@ -77,6 +85,30 @@ void merge_sort(int *vetor, int tam){
     
 }
 
+//gerar vetor de números aleatórios
+void gerar_conjuntos(int* vetor, int tam) {
+    int i = 0;
+    while (i < tam) {
+        int num = 1 + rand() % 1000; // Gera um número aleatório entre 0 e 999
+        int repetido = 0; // Variável para verificar se o número já existe no vetor
+
+        // Verifica se o número já está no vetor
+        for (int j = 0; j < i; j++) {
+            
+            if (vetor[j] == num) {
+                repetido = 1;
+                break;
+            }
+        }
+
+        // Adiociona o elemento caso ele não esteja repetido
+        if (repetido =! 0) {
+            vetor[i] = num;
+            i++;
+        }
+    }
+}
+
 //função para imprimir vetor ordenado
 void imprimir(int* vetor, int tam){
     
@@ -92,20 +124,36 @@ void imprimir(int* vetor, int tam){
 int main()
 {
     
+    srand(time(NULL)); // Inicializa o gerador de números aleatórios
+    
     //declaração de variáveis e vetores
-    int vetor[] = {5, 64, 34, 7, 25, 12, 22, 11, 90, 21}; //vetor que será ordenado
-    int tam = 10;
+    int tam = 1 + rand() % 50; // gera um tamanho aleatório para o vetor entre 1 e 100
+    int vetor[tam]; //vetor que será ordenado
+    
+    clock_t inicio, fim; //declaração das variáveis inicio e fim do tipo clock_t
+    double tempo_execucao; //variável para armazenar o tempo de execução do algoritmo (fim - inicio)
+    
+    gerar_conjuntos(vetor, tam);
     
     //imprimindo vetor desordenado
     printf("\nVETOR DESORDENADO:\n");
     imprimir(vetor, tam);
     
     //ordenando vetor
-    insertion_sort(vetor, tam);
+    inicio = clock();
+    selection_sort(vetor, tam);
+    fim = clock();
+    
+    //calculando tempo de execução
+    tempo_execucao = ((double)(fim - inicio))/ CLOCKS_PER_SEC; //CLOCK_PER_SEC é o número de tique por segundo 
     
     //imprimindo vetor ordenado
     printf("\nVETOR ORDENADO:\n");
     imprimir(vetor, tam);
+    
+    //Imprimindo tempo de execução
+    printf("\n\nTamanho do Vetor: %d elementos", tam);
+    printf("\nTempo de execução: %f segundos", tempo_execucao);
     
 
     return 0;
