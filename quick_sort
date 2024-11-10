@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Função que particiona o vetor e retorna a posição do pivô
+int particiona(int *vetor, int inicio, int fim) {
+    // Calcula o pivô como média dos três elementos (início, meio e fim)
+    int pivo = (vetor[inicio] + vetor[fim] + vetor[(inicio + fim)/2]) / 3;
+    
+    while (inicio < fim) {
+        // Encontra elemento maior que o pivô à esquerda
+        while (inicio < fim && vetor[inicio] <= pivo)
+            inicio++; // Corrigido: era inicio += inicio
+            
+        // Encontra elemento menor que o pivô à direita
+        while (inicio < fim && vetor[fim] > pivo)
+            fim--;   // Corrigido: era fim = fim - 1
+            
+        // Troca os elementos encontrados
+        if (inicio < fim) {
+            int aux = vetor[inicio];
+            vetor[inicio] = vetor[fim];
+            vetor[fim] = aux;
+        }
+    }
+    return inicio;
+}
+
+// Função principal do QuickSort
+void quickSort(int *vetor, int inicio, int fim) {
+    if (inicio < fim) {
+        // Obtém a posição do pivô após particionar
+        int posi = particiona(vetor, inicio, fim);
+        
+        // Ordena recursivamente as duas partições
+        quickSort(vetor, inicio, posi - 1); // Subvetor à esquerda
+        quickSort(vetor, posi + 1, fim);    // Corrigido: era posi, agora é posi + 1
+    }
+}
+
+
+//gerar vetor de números aleatórios
+void gerar_conjuntos(int* vetor, int tam) {
+    int i = 0;
+    while (i < tam) {
+        int num = 1 + rand() % 1000; // Gera um número aleatório entre 0 e 999
+        int repetido = 0; // Variável para verificar se o número já existe no vetor
+
+        // Verifica se o número já está no vetor
+        for (int j = 0; j < i; j++) {
+            
+            if (vetor[j] == num) {
+                repetido = 1;
+                break;
+            }
+        }
+
+        // Adiociona o elemento caso ele não esteja repetido
+        if (repetido == 0) {
+            vetor[i] = num;
+            i++;
+        }
+    }
+}
+
+//função para imprimir vetor ordenado
+void imprimir(int* vetor, int tam){
+    
+    //declaração de variável
+    int i; //indice utilizado no for
+    
+    for(i = 0; i < tam; i++){
+        printf(" - %d", vetor[i]);
+    }
+    
+}
+
+int main()
+{
+    
+    srand(time(NULL)); // Inicializa o gerador de números aleatórios
+    
+    //declaração de variáveis e vetores
+    int tam = 1 + rand() % 50; // gera um tamanho aleatório para o vetor entre 1 e 100
+    int vetor[tam]; //vetor que será ordenado
+    
+    clock_t inicio, fim; //declaração das variáveis inicio e fim do tipo clock_t
+    double tempo_execucao; //variável para armazenar o tempo de execução do algoritmo (fim - inicio)
+    
+    gerar_conjuntos(vetor, tam);
+    
+    //imprimindo vetor desordenado
+    printf("\nVETOR DESORDENADO:\n");
+    imprimir(vetor, tam);
+    
+    //ordenando vetor
+    inicio = clock();
+    quickSort(vetor, 0, tam-1);
+    fim = clock();
+    
+    //calculando tempo de execução
+    tempo_execucao = ((double)(fim - inicio))/ CLOCKS_PER_SEC; //CLOCK_PER_SEC é o número de tique por segundo 
+    
+    //imprimindo vetor ordenado
+    printf("\nVETOR ORDENADO:\n");
+    imprimir(vetor, tam);
+    
+    //Imprimindo tempo de execução
+    printf("\n\nTamanho do Vetor: %d elementos", tam);
+    printf("\nTempo de execução: %f segundos", tempo_execucao);
+    
+
+    return 0;
+}
