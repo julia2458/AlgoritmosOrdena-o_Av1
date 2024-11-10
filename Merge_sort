@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+
+// Declaração das funções que serão utilizadas no programa
+void merge(int *vetor, int inicio, int meio, int fim); 
+void merge_sort(int *vetor, int inicio, int fim); 
+
+// Função que implementa o merge sort
+void merge_sort(int *vetor, int inicio, int fim){ 
+    int meio; 
+    if(inicio < fim){ 
+        meio = (inicio+fim)/2; // Calcula o ponto médio do vetor
+        merge_sort(vetor, inicio, meio); // Ordena a primeira metade do vetor
+        merge_sort(vetor, meio+1, fim); // Ordena a segunda metade do vetor
+        merge(vetor, inicio, meio, fim); // Combina as duas metades ordenadas
+    }
+}
+
+// Função que combina duas partes ordenadas do vetor em uma única parte ordenada
+void merge(int *vetor, int inicio, int meio, int fim){
+    int *temp, a1, a2, tam, i, j, k; 
+    int fim1 = 0, fim2 = 0; // variaveis para controlar o fim de cada subvetor
+    
+    tam = fim - inicio + 1; // Calcula o tamanho do vetor temporário
+    a1 = inicio; // Índice inicial da primeira metade
+    a2 = meio + 1; // Índice inicial da segunda metade
+    
+    // Aloca memória para o vetor temporário
+    temp = (int *) malloc(tam * sizeof(int));
+    
+    if(temp != NULL){ // Verifica a alocação 
+        for(i = 0; i < tam; i++){
+            // Verifica se já chegou ao fim da primeira metade
+            if(a1 > meio)
+                fim1 = 1;
+            // Verifica se já chegou ao fim da segunda metade
+            if(a2 > fim)
+                fim2 = 1;
+                
+            if(!fim1 && !fim2){ // Se ainda existe elementos nas metades
+                if(vetor[a1] < vetor[a2]) // Compara os elementos das duas metades
+                    temp[i] = vetor[a1++]; // Copia o menor elemento
+                else
+                    temp[i] = vetor[a2++];
+            }else{ // Se uma das metades já acabou
+                if(!fim1) // Se ainda existe elementos na primeira metade
+                    temp[i] = vetor[a1++];
+                else // Se ainda existe elementos na segunda metade
+                    temp[i] = vetor[a2++];
+            }
+        }
+        
+        // Copia os elementos ordenados do vetor temporário para o vetor original
+        for(j = 0, k = inicio; j < tam; j++, k++){
+            vetor[k] = temp[j];
+        }
+        
+        free(temp); // Libera a memória alocada para o vetor temporário
+    }
+}
+
+//gerar vetor de números aleatórios
+void gerar_conjuntos(int* vetor, int tam) {
+    int i = 0;
+    while (i < tam) {
+        int num = 1 + rand() % 1000; // Gera um número aleatório entre 0 e 999
+        int repetido = 0; // Variável para verificar se o número já existe no vetor
+
+        // Verifica se o número já está no vetor
+        for (int j = 0; j < i; j++) {
+            
+            if (vetor[j] == num) {
+                repetido = 1;
+                break;
+            }
+        }
+
+        // Adiociona o elemento caso ele não esteja repetido
+        if (repetido == 0) {
+            vetor[i] = num;
+            i++;
+        }
+    }
+}
+
+//função para imprimir vetor ordenado
+void imprimir(int* vetor, int tam){
+    
+    //declaração de variável
+    int i; //indice utilizado no for
+    
+    for(i = 0; i < tam; i++){
+        printf(" - %d", vetor[i]);
+    }
+    
+}
+
+int main()
+{
+    
+    srand(time(NULL)); // Inicializa o gerador de números aleatórios
+    
+    //declaração de variáveis e vetores
+    int tam = 1 + rand() % 50; // gera um tamanho aleatório para o vetor entre 1 e 100
+    int vetor[tam]; //vetor que será ordenado
+    
+    clock_t inicio, fim; //declaração das variáveis inicio e fim do tipo clock_t
+    double tempo_execucao; //variável para armazenar o tempo de execução do algoritmo (fim - inicio)
+    
+    gerar_conjuntos(vetor, tam);
+    
+    //imprimindo vetor desordenado
+    printf("\nVETOR DESORDENADO:\n");
+    imprimir(vetor, tam);
+    
+    //ordenando vetor
+    inicio = clock();
+    merge_sort(vetor, 0, tam-1);
+    fim = clock();
+    
+    //calculando tempo de execução
+    tempo_execucao = ((double)(fim - inicio))/ CLOCKS_PER_SEC; //CLOCK_PER_SEC é o número de tique por segundo 
+    
+    //imprimindo vetor ordenado
+    printf("\nVETOR ORDENADO:\n");
+    imprimir(vetor, tam);
+    
+    //Imprimindo tempo de execução
+    printf("\n\nTamanho do Vetor: %d elementos", tam);
+    printf("\nTempo de execução: %f segundos", tempo_execucao);
+    
+
+    return 0;
+}
